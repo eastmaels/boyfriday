@@ -143,15 +143,16 @@
         }
       });
 
-      steem.api.streamOperations(function (err, operations) {
+      var outputted = false;
+      steem.api.streamTransactions(function (err, transaction) {
+        const operations = transaction.operations[0];
 
         if (operations[0] === 'comment' && operations[1].parent_author === '') {
-
           let jsonMetadata;
           let created;
           try {
             jsonMetadata = JSON.parse(operations[1].json_metadata);
-            created = jsonMetadata.created_at;
+            created = new Date(transaction.expiration);
           } catch (err) {
           }
 
@@ -164,7 +165,7 @@
             const author = operations[1].author;
             const steemitProfile = `https://steemit.com/@${author}`;
             const permlink = operations[1].permlink;
-            console.log("Created : " + created);
+            console.log("Created : " + created.toLocaleString());
             const link = `https://steemit.com/@${author}/${permlink}`;
 
             const postTr = `
