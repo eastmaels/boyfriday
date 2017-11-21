@@ -1,0 +1,22 @@
+
+I need a  "Boy Friday" bot, and I seek your help to find a programmer to do the job. Boy Friday  will be ÅearmedÅf with one more keyword phrases (some involving complex Boolean logic --  e.g (A and (B or C) and (D or E))) and would keep track of new Steemit posts. Each time a new post satisfies one of my keyword pharses, it would either 'ring a bell' on my computer (Mac or PC) or add the post title to an output file.
+
+P.S. Instead of "new post satisfies", I should have written "new post's title or one-line abstract satisfies".
+
+=====
+
+Second, let me offer the important clarification that I do not need a native app. I just need something with the functionality that I described. 
+Third, what appears to be peculiar with my request is my need to employ complex query structures. What I'm sensing so far in what the existing bots are bringing back to my screen is that they are using extremely simple query structures such as "in tag class K, bring back the titles with payouts greater than N", or "bring back the titles that contain the phrase Z".  My bot needs to execute a sequence of different tests within the same title (and perhaps the abstract too) before deciding whether that's a title to report back to me.
+Finally, I have no problem with the browser being left open in the background. One approach you might take (in case this is very simple to do) is to open a second browser window (I will tell Chrome to allow it) and into that window you would push the titles that satisfy my queries. To be explicit, this is a good alternative to having you figuring out how to ring a bell on my computer or how to issue a notification that doesn't disappear automatically after a few seconds.
+
+
+===
+
+ I need to clarify "sequence of different tests". If Test 1 passes run Test 2, if Test 2 passes run Test 3, etc.; but if any test fails jump to the next 'arriving title' (i.e. title arriving in the "New post" stream).
+
+===
+
+ I may have made the programming task seem unduly complex when I said " If Test 1 passes run Test 2, if Test 2 passes run Test 3, etc.; but if any test fails jump to the next 'arriving title' ".  So I need to add the following comment.
+ Consider this keyword phrase:  (liquidity and (SMT or Bancor) and ("smart token" or "Smart Token") ) . It points to a  multi-test sequence, with potentially much more than 3 tests.
+ 
+ 
