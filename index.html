@@ -9,8 +9,6 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
-    <link href="grid.css" rel="stylesheet">
   </head>
   <body>
     <div class="container">
@@ -21,9 +19,71 @@
       <p>These are the conditions that will be considered to get notifications.</p>
     
       <div class="row">
-        <div class="col-4">.col-4</div>
-        <div class="col-4">.col-4</div>
-        <div class="col-4">.col-4</div>
+        <div class="col-md-12">
+          <form>
+          <table id="rule-table" class= 'table table-hover'>
+            <thead>
+                <tr>
+                  <th>Condition</th>
+                  <th>Field</th>
+                  <th>Operation</th>
+                  <th>Value</th>
+                  <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr class="form-group">
+                <td></td>
+                <td>
+                  <select class="form-control">
+                    <option value=""></option>
+                    <option value="title">Title</option>
+                    <option value="body">Body</option>
+                    <option value="tag">Tag</option>
+                  </select>
+                </td>
+                <td>
+                  <select class="form-control">
+                    <option value="contains">contains</option>
+                    <option value="equal">=</option>
+                  </select>
+                </td>
+                <td>
+                  <input type="text" value="" class="form-control" />
+                </td>
+                <td>
+                  <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary add-rule">Add</button>
+        </div>
+      </div>
+      <hr/>
+<div class="row">
+        <div class="col-md-12">
+          <form>
+          <table id="post-table" class= 'table table-hover'>
+            <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          </form>
+        </div>
       </div>
 
     </div>
@@ -35,21 +95,72 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script>
-    var count = 0;
-    
-    steem.api.streamOperations(function (err, operations) {
-
-      if (operations[0] === 'comment' && operations[1].parent_author === '') {
-        let jsonMetadata;
-        try {
-          jsonMetadata = JSON.parse(operations[1].json_metadata);
-        } catch (err) {
+      $('.add-rule').on('click', function() {
+        if ($('#rule-table tbody tr').length > 5) {
+          return false;
         }
 
-        console.log("JSON Metadata");
-        console.log("Title" + operations[1].title);
-      }
-    });
+        const tr = '\
+              <tr class="form-group">\
+                <td>\
+                  <select class="form-control">\
+                    <option value="and">AND</option>\
+                    <option value="or">OR</option>\
+                  </select>\
+                </td>\
+                <td>\
+                  <select class="form-control">\
+                    <option value=""></option>\
+                    <option value="title">Title</option>\
+                    <option value="body">Body</option>\
+                    <option value="tag">Tag</option>\
+                  </select>\
+                </td>\
+                <td>\
+                  <select class="form-control">\
+                    <option value="contains">contains</option>\
+                    <option value="equal">=</option>\
+                  </select>\
+                </td>\
+                <td>\
+                  <input type="text" value="" class="form-control" />\
+                </td>\
+                <td>\
+                  <button type="button" class="close" aria-label="Close">\
+                    <span aria-hidden="true">&times;</span>\
+                  </button>\
+                </td>\
+              </tr>';
+
+        $('#rule-table tbody').append(tr);
+        if ($('#rule-table tbody tr').length >= 5) {
+          $('.add-rule').prop('disabled', true);
+        }
+      });
+
+      $('#rule-table tbody').on('click', '.close', function(event) {
+        if ($('#rule-table tbody tr').length > 1) {
+          $(this).closest('tr').remove();
+        }
+
+        if ($('#rule-table tbody tr').length < 5) {
+          $('.add-rule').prop('disabled', false);
+        }
+      });
+
+      steem.api.streamOperations(function (err, operations) {
+
+        if (operations[0] === 'comment' && operations[1].parent_author === '') {
+          let jsonMetadata;
+          try {
+            jsonMetadata = JSON.parse(operations[1].json_metadata);
+          } catch (err) {
+          }
+
+          console.log("JSON Metadata");
+          console.log("Title" + operations[1].title);
+        }
+      });
     </script>
   </body>
 </html>
