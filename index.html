@@ -35,15 +35,15 @@
               <tr class="form-group">
                 <td></td>
                 <td>
-                  <select class="form-control">
+                  <select class="form-control" disabled>
                     <option value=""></option>
-                    <option value="title">Title</option>
+                    <option value="title" selected>Title</option>
                     <option value="body">Body</option>
                     <option value="tag">Tag</option>
                   </select>
                 </td>
                 <td>
-                  <select class="form-control">
+                  <select class="form-control" disabled>
                     <option value="contains">contains</option>
                     <option value="equal">=</option>
                   </select>
@@ -64,28 +64,18 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <button type="button" class="btn btn-primary add-rule">Add</button>
+          <button type="button" class="btn btn-primary add-rule" style="display: none">Add</button>
+          <button type="button" class="btn btn-primary clear-posts">Clear</button>
         </div>
       </div>
       <hr/>
-<div class="row">
-        <div class="col-md-12">
-          <form>
-          <table id="post-table" class= 'table table-hover'>
-            <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Link</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-          </form>
+      <div id="post-table">
+        <div class="row">
+          <div class="col-md-6">Title</div>
+          <div class="col-md-3">Author</div>
+          <div class="col-md-3">Created</div>
         </div>
       </div>
-
     </div>
 
     <!-- Optional JavaScript -->
@@ -95,12 +85,17 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script>
+      $('.clear-posts').on('click', function() {
+        const tableHeader = $('#post-table .row:first');
+        $('#post-table').html(tableHeader);
+      });
+
       $('.add-rule').on('click', function() {
         if ($('#rule-table tbody tr').length > 5) {
           return false;
         }
 
-        const tr = '\
+        const condTr = '\
               <tr class="form-group">\
                 <td>\
                   <select class="form-control">\
@@ -132,7 +127,7 @@
                 </td>\
               </tr>';
 
-        $('#rule-table tbody').append(tr);
+        $('#rule-table tbody').append(condTr);
         if ($('#rule-table tbody tr').length >= 5) {
           $('.add-rule').prop('disabled', true);
         }
@@ -151,16 +146,39 @@
       steem.api.streamOperations(function (err, operations) {
 
         if (operations[0] === 'comment' && operations[1].parent_author === '') {
+
           let jsonMetadata;
+          let created;
           try {
             jsonMetadata = JSON.parse(operations[1].json_metadata);
+            created = jsonMetadata.created_at;
           } catch (err) {
           }
 
-          console.log("JSON Metadata");
-          console.log("Title" + operations[1].title);
+          const title = operations[1].title;
+          const titleCond = $(".form-group input[type=text]").val();
+
+          if (title.indexOf(titleCond) > 0) {
+            console.log("Title : " + operations[1].title);
+
+            const author = operations[1].author;
+            const steemitProfile = `https://steemit.com/@${author}`;
+            const permlink = operations[1].permlink;
+            console.log("Created : " + created);
+            const link = `https://steemit.com/@${author}/${permlink}`;
+
+            const postTr = `
+                <div class="row">
+                  <div class="col-md-6"><a target="_blank" href="${link}">${title}</a></div>
+                  <div class="col-md-3"><a target="_blank" href="${steemitProfile}">${author}</a></div>
+                  <div class="col-md-3">${created}</div>
+                </div>`;
+
+            $(postTr).insertAfter('#post-table .row:first');
+          }
         }
       });
+
     </script>
   </body>
 </html>
