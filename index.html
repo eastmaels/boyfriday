@@ -73,7 +73,7 @@
         <div class="row">
           <div class="col-md-6">Title</div>
           <div class="col-md-3">Author</div>
-          <div class="col-md-3">Created</div>
+          <div class="col-md-3" style="display: none">Created</div>
         </div>
       </div>
     </div>
@@ -172,7 +172,7 @@
                 <div class="row">
                   <div class="col-md-6"><a target="_blank" href="${link}">${title}</a></div>
                   <div class="col-md-3"><a target="_blank" href="${steemitProfile}">${author}</a></div>
-                  <div class="col-md-3">${created}</div>
+                  <div class="col-md-3" style="display: none">${created}</div>
                 </div>`;
 
             $(postTr).insertAfter('#post-table .row:first');
