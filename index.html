@@ -30,11 +30,10 @@
               <option value=""></option>
               <option value="title" selected>Title</option>
               <option value="body">Body</option>
-              <option value="tag">Tag</option>
             </select>
             <select class="form-control operator">
               <option value="contains">contains</option>
-              <option value="=">=</option>
+              <option value="===">=</option>
               <option value=">">&gt;</option>
               <option value="<">&tt;</option>
             </select>
@@ -55,15 +54,20 @@
         <div class="col-md-1">
           <button type="button" class="btn btn-success evaluate">Evaluate</button>
         </div>
+        <div class="col-md-10">
+          <code id="evaluate-text"></code>
+        </div>
       </div>
     </div>
     <hr/>
-    <div class="container" id="post-table">
+    <div class="container">
       <div class="row">
         <div class="col-md-12">
           <button type="button" class="btn btn-danger clear-posts">Clear Table</button>
         </div>
       </div>
+    </div>
+    <div class="container" id="post-table">
       <div class="row">
         <div class="col-md-6">Title</div>
         <div class="col-md-3">Author</div>
@@ -87,7 +91,7 @@
       $('.evaluate').on('click', function() {
         const $rules = $('#rules-table .row');
         const ruleForEval = getConditionForEval($rules);
-        console.log(ruleForEval);
+        $("#evaluate-text").html(ruleForEval);
       });
 
       $('.add-rule').on('click', function() {
@@ -96,8 +100,8 @@
                 <div class="col-sm-2">
                   <select class="form-control or-and">
                     <option value=""></option>
-                    <option value="and">AND</option>
-                    <option value="or">OR</option>
+                    <option value="&&">AND</option>
+                    <option value="||">OR</option>
                   </select>
                 </div>
                 <div class="col-sm-1">
@@ -109,12 +113,11 @@
                       <option value=""></option>
                       <option value="title">Title</option>
                       <option value="body">Body</option>
-                      <option value="tag">Tag</option>
                     </select>
                     <select class="form-control operator">
                       <option value=""></option>
                       <option value="contains">contains</option>
-                      <option value="=">=</option>
+                      <option value="===">=</option>
                       <option value=">">&gt;</option>
                       <option value="<">&lt;</option>
                     </select>
@@ -134,7 +137,7 @@
         }
       });
 
-/*
+//*
       var outputted = false;
       steem.api.streamTransactions(function (err, transaction) {
         const operations = transaction.operations[0];
@@ -148,18 +151,17 @@
           } catch (err) {
           }
 
-          const condition = getConditionForEval($('#rules-table'));
+          const ruleForEval = getConditionForEval($('#rules-table .row'));
+          $("#evaluate-text").html(ruleForEval);
 
           const title = operations[1].title;
-          const titleCond = $(".form-group input[type=text]").val();
+          const body = operations[1].body;
 
-          if (titleCond && title.indexOf(titleCond) >= 0) {
-            console.log("Title : " + operations[1].title);
-
+          if (eval(ruleForEval)) {
             const author = operations[1].author;
             const steemitProfile = `https://steemit.com/@${author}`;
             const permlink = operations[1].permlink;
-            console.log("Created : " + created.toLocaleString());
+
             const link = `https://steemit.com/@${author}/${permlink}`;
 
             const postTr = `
@@ -171,13 +173,14 @@
 
             $(postTr).insertAfter('#post-table .row:first');
           }
+
         }
       });
 /* */
 
       function getConditionForEval($rules) {
 
-        let ruleForEval = "";
+        var ruleForEval = "";
         $rules.each(function(index, rule) {
           const $rule = $(rule);
 
@@ -189,27 +192,24 @@
           const condValue = $rule.find('.condValue').val();
           const closePar = $rule.find('.close-parenthesis').attr('aria-pressed');
 
-          // if (orAnd) { ruleForEval += " " + orAnd + " "; }
-          // if (openPar === "true") { ruleForEval += " ( "; }
+          if (condValue) {
 
-          ruleForEval += orAnd ? " " + orAnd + " " : "";
-          ruleForEval += (openPar === "true") ? " ( " : "";
+            ruleForEval += (orAnd ? " " + orAnd + " " : "");
+            ruleForEval += (openPar === "true") ? " ( " : "";
 
-          if (operator === "contains") {
-            ruleForEval += field + ".indexOf('" + condValue + "') >= 0 ";
+            if (operator === "contains") {
+              ruleForEval += field + ".indexOf('" + condValue + "') >= 0 ";
 
-          } else {
-            //if (field) { ruleForEval += " " + field + " "; }
-            //if (operator) { ruleForEval += " " + operator + " "; }
-            //if (condValue) { ruleForEval += " '" + condValue + "' "; }
-            
-            ruleForEval += field ? " " + field + " " : "";
-            ruleForEval += operator ? " " + operator + " " : "";
-            ruleForEval += condValue ? " '" + condValue + "' " : "";
+            } else {
+              ruleForEval += field ? " " + field + " " : "";
+              ruleForEval += operator ? " " + operator + " " : "";
+              ruleForEval += condValue ? " '" + condValue + "' " : "";
+            }
+
+            ruleForEval += (closePar === "true") ? " ) " : "";
+
           }
 
-          //if (closePar === "true") { ruleForEval += " ) "; }
-          ruleForEval += (closePar === "true") ? " ) " : "";
         });
 
         return ruleForEval;
