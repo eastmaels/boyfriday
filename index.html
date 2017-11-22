@@ -22,25 +22,27 @@
         <div class="col-sm-2">
         </div>
         <div class="col-sm-1">
-          <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
+          <button type="button" class="btn btn-light open-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
         </div>
         <div class="col-sm-5">
           <form class="form-inline">
-            <select class="form-control">
+            <select class="form-control field">
               <option value=""></option>
               <option value="title" selected>Title</option>
               <option value="body">Body</option>
               <option value="tag">Tag</option>
             </select>
-            <select class="form-control">
+            <select class="form-control operator">
               <option value="contains">contains</option>
-              <option value="equal">=</option>
+              <option value="=">=</option>
+              <option value=">">&gt;</option>
+              <option value="<">&tt;</option>
             </select>
-            <input type="text" value="" class="form-control" />
+            <input type="text" value="" class="form-control condValue" />
           </form>
         </div>
         <div class="col-sm-1">
-          <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
+          <button type="button" class="btn btn-light close-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
         </div>
       </div>
     </div>
@@ -83,40 +85,45 @@
       });
 
       $('.evaluate').on('click', function() {
-        console.log($('#rules-table .row').length);
+        const $rules = $('#rules-table .row');
+        const ruleForEval = getConditionForEval($rules);
+        console.log(ruleForEval);
       });
 
       $('.add-rule').on('click', function() {
         const condTr = `
               <div class="row">
                 <div class="col-sm-2">
-                  <select class="form-control">
+                  <select class="form-control or-and">
+                    <option value=""></option>
                     <option value="and">AND</option>
                     <option value="or">OR</option>
                   </select>
                 </div>
                 <div class="col-sm-1">
-                  <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
+                  <button type="button" class="btn btn-light open-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
                 </div>
                 <div class="col-sm-5">
                   <form class="form-inline">
-                    <select class="form-control">
+                    <select class="form-control field">
                       <option value=""></option>
                       <option value="title" selected>Title</option>
                       <option value="body">Body</option>
                       <option value="tag">Tag</option>
                     </select>
-                    <select class="form-control">
+                    <select class="form-control operator">
+                      <option value=""></option>
                       <option value="contains">contains</option>
-                      <option value="equal">=</option>
+                      <option value="=">=</option>
+                      <option value=">">&gt;</option>
+                      <option value="<">&lt;</option>
                     </select>
-                    <input type="text" value="" class="form-control" />
+                    <input type="text" value="" class="form-control condValue" />
                   </form>
                 </div>
                 <div class="col-sm-1">
-                  <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
-                </div>
-              </div>`;
+                  <button type="button" class="btn btn-light close-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
+                </div>`;
 
         $(condTr).insertAfter('#rules-table .row:last');
       });
@@ -141,7 +148,7 @@
           } catch (err) {
           }
 
-          const condition = getConditions($('#rules-table'));
+          const condition = getConditionForEval($('#rules-table'));
 
           const title = operations[1].title;
           const titleCond = $(".form-group input[type=text]").val();
@@ -168,9 +175,47 @@
       });
 /* */
 
-      function getConditions($rulesTable) {
-        console.log($rulesTable.find('.rows').length);
-      }
+      function getConditionForEval($rules) {
+
+        let ruleForEval = "";
+        $rules.each(function(index, rule) {
+          const $rule = $(rule);
+
+          const orAnd =  $rule.find('.or-and').val();
+          const openPar = $rule.find('.open-parenthesis').attr('aria-pressed');
+
+          const field = $rule.find('.field').val();
+          const operator = $rule.find('.operator').val();
+          const condValue = $rule.find('.condValue').val();
+          const closePar = $rule.find('.close-parenthesis').attr('aria-pressed');
+
+          if (orAnd) {
+            ruleForEval += " " + orAnd + " ";
+          }
+
+          if (openPar === "true") {
+            ruleForEval += " ( ";
+          }
+
+          if (field) {
+            ruleForEval += " " + field + " ";
+          }
+
+          if (operator) {
+            ruleForEval += " " + operator + " ";
+          }
+
+          if (condValue) {
+            ruleForEval += " '" + condValue + "' ";
+          }
+
+          if (closePar === "true") {
+            ruleForEval += " ) ";
+          }
+        });
+
+        return ruleForEval;
+     }
 
     </script>
   </body>
