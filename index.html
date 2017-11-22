@@ -189,7 +189,7 @@
 
           const field = $rule.find('.field').val();
           const operator = $rule.find('.operator').val();
-          const condValue = $rule.find('.condValue').val();
+          const condValue = $rule.find('.condValue').val().toLowerCase();
           const closePar = $rule.find('.close-parenthesis').attr('aria-pressed');
 
           if (condValue) {
@@ -198,7 +198,7 @@
             ruleForEval += (openPar === "true") ? " ( " : "";
 
             if (operator === "contains") {
-              ruleForEval += field + ".indexOf('" + condValue + "') >= 0 ";
+              ruleForEval += field + ".toLowerCase().indexOf('" + condValue + "') >= 0 ";
 
             } else {
               ruleForEval += field ? " " + field + " " : "";
