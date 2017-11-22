@@ -77,19 +77,16 @@
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script>
 
-      $('.add-condition').on('click', function() {
-      });
-
       $('.clear-posts').on('click', function() {
         const tableHeader = $('#post-table .row:first');
         $('#post-table').html(tableHeader);
       });
 
-      $('.add-rule').on('click', function() {
-        if ($('#rules-table tbody tr').length > 5) {
-          return false;
-        }
+      $('.evaluate').on('click', function() {
+        console.log($('#rules-table .row').length);
+      });
 
+      $('.add-rule').on('click', function() {
         const condTr = `
               <div class="row">
                 <div class="col-sm-2">
@@ -122,18 +119,11 @@
               </div>`;
 
         $(condTr).insertAfter('#rules-table .row:last');
-        if ($('#rules-table tbody tr').length >= 5) {
-          $('.add-rule').prop('disabled', true);
-        }
       });
 
       $('#rules-table tbody').on('click', '.close', function(event) {
         if ($('#rules-table tbody tr').length > 1) {
           $(this).closest('tr').remove();
-        }
-
-        if ($('#rules-table tbody tr').length < 5) {
-          $('.add-rule').prop('disabled', false);
         }
       });
 
@@ -151,7 +141,7 @@
           } catch (err) {
           }
 
-          const condition = getConditions($('#rule-table tbody'));
+          const condition = getConditions($('#rules-table'));
 
           const title = operations[1].title;
           const titleCond = $(".form-group input[type=text]").val();
@@ -178,8 +168,8 @@
       });
 /* */
 
-      function getConditions($ruleTable) {
-        console.log($ruleTable);
+      function getConditions($rulesTable) {
+        console.log($rulesTable.find('.rows').length);
       }
 
     </script>
