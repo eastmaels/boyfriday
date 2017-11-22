@@ -107,7 +107,7 @@
                   <form class="form-inline">
                     <select class="form-control field">
                       <option value=""></option>
-                      <option value="title" selected>Title</option>
+                      <option value="title">Title</option>
                       <option value="body">Body</option>
                       <option value="tag">Tag</option>
                     </select>
@@ -189,29 +189,27 @@
           const condValue = $rule.find('.condValue').val();
           const closePar = $rule.find('.close-parenthesis').attr('aria-pressed');
 
-          if (orAnd) {
-            ruleForEval += " " + orAnd + " ";
+          // if (orAnd) { ruleForEval += " " + orAnd + " "; }
+          // if (openPar === "true") { ruleForEval += " ( "; }
+
+          ruleForEval += orAnd ? " " + orAnd + " " : "";
+          ruleForEval += (openPar === "true") ? " ( " : "";
+
+          if (operator === "contains") {
+            ruleForEval += field + ".indexOf('" + condValue + "') >= 0 ";
+
+          } else {
+            //if (field) { ruleForEval += " " + field + " "; }
+            //if (operator) { ruleForEval += " " + operator + " "; }
+            //if (condValue) { ruleForEval += " '" + condValue + "' "; }
+            
+            ruleForEval += field ? " " + field + " " : "";
+            ruleForEval += operator ? " " + operator + " " : "";
+            ruleForEval += condValue ? " '" + condValue + "' " : "";
           }
 
-          if (openPar === "true") {
-            ruleForEval += " ( ";
-          }
-
-          if (field) {
-            ruleForEval += " " + field + " ";
-          }
-
-          if (operator) {
-            ruleForEval += " " + operator + " ";
-          }
-
-          if (condValue) {
-            ruleForEval += " '" + condValue + "' ";
-          }
-
-          if (closePar === "true") {
-            ruleForEval += " ) ";
-          }
+          //if (closePar === "true") { ruleForEval += " ) "; }
+          ruleForEval += (closePar === "true") ? " ) " : "";
         });
 
         return ruleForEval;
