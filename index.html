@@ -11,7 +11,7 @@
 
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="rules-table">
       <h1>Boy Friday</h1>
       <p class="lead">A simple post notification.</p>
 
@@ -19,62 +19,53 @@
       <p>These are the conditions that will be considered to get notifications.</p>
     
       <div class="row">
-        <div class="col-md-12">
-          <form>
-          <table id="rule-table" class= 'table table-hover'>
-            <thead>
-                <tr>
-                  <th>Condition</th>
-                  <th>Field</th>
-                  <th>Operation</th>
-                  <th>Value</th>
-                  <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-              <tr class="form-group">
-                <td></td>
-                <td>
-                  <select class="form-control" disabled>
-                    <option value=""></option>
-                    <option value="title" selected>Title</option>
-                    <option value="body">Body</option>
-                    <option value="tag">Tag</option>
-                  </select>
-                </td>
-                <td>
-                  <select class="form-control" disabled>
-                    <option value="contains">contains</option>
-                    <option value="equal">=</option>
-                  </select>
-                </td>
-                <td>
-                  <input type="text" value="" class="form-control" />
-                </td>
-                <td>
-                  <button type="button" class="close" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
+        </div>
+        <div class="col-sm-5">
+          <form class="form-inline">
+            <select class="form-control">
+              <option value=""></option>
+              <option value="title" selected>Title</option>
+              <option value="body">Body</option>
+              <option value="tag">Tag</option>
+            </select>
+            <select class="form-control">
+              <option value="contains">contains</option>
+              <option value="equal">=</option>
+            </select>
+            <input type="text" value="" class="form-control" />
           </form>
+        </div>
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
+        </div>
+      </div>
+    </div>
+    <hr/>
+    <div class="container" id="buttons-table">
+      <div class="row">
+        <div class="col-md-1">
+          <button type="button" class="btn btn-primary add-rule">Add Row</button>
+        </div>
+        <div class="col-md-1">
+          <button type="button" class="btn btn-success evaluate">Evaluate</button>
+        </div>
+      </div>
+    </div>
+    <hr/>
+    <div class="container" id="post-table">
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-danger clear-posts">Clear Table</button>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
-          <button type="button" class="btn btn-primary add-rule" style="display: none">Add</button>
-          <button type="button" class="btn btn-primary clear-posts">Clear</button>
-        </div>
-      </div>
-      <hr/>
-      <div id="post-table">
-        <div class="row">
-          <div class="col-md-6">Title</div>
-          <div class="col-md-3">Author</div>
-          <div class="col-md-3" style="display: none">Created</div>
-        </div>
+        <div class="col-md-6">Title</div>
+        <div class="col-md-3">Author</div>
+        <div class="col-md-3" style="display: none">Created</div>
       </div>
     </div>
 
@@ -85,64 +76,68 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script>
+
+      $('.add-condition').on('click', function() {
+      });
+
       $('.clear-posts').on('click', function() {
         const tableHeader = $('#post-table .row:first');
         $('#post-table').html(tableHeader);
       });
 
       $('.add-rule').on('click', function() {
-        if ($('#rule-table tbody tr').length > 5) {
+        if ($('#rules-table tbody tr').length > 5) {
           return false;
         }
 
-        const condTr = '\
-              <tr class="form-group">\
-                <td>\
-                  <select class="form-control">\
-                    <option value="and">AND</option>\
-                    <option value="or">OR</option>\
-                  </select>\
-                </td>\
-                <td>\
-                  <select class="form-control">\
-                    <option value=""></option>\
-                    <option value="title">Title</option>\
-                    <option value="body">Body</option>\
-                    <option value="tag">Tag</option>\
-                  </select>\
-                </td>\
-                <td>\
-                  <select class="form-control">\
-                    <option value="contains">contains</option>\
-                    <option value="equal">=</option>\
-                  </select>\
-                </td>\
-                <td>\
-                  <input type="text" value="" class="form-control" />\
-                </td>\
-                <td>\
-                  <button type="button" class="close" aria-label="Close">\
-                    <span aria-hidden="true">&times;</span>\
-                  </button>\
-                </td>\
-              </tr>';
+        const condTr = `
+              <div class="row">
+                <div class="col-sm-2">
+                  <select class="form-control">
+                    <option value="and">AND</option>
+                    <option value="or">OR</option>
+                  </select>
+                </div>
+                <div class="col-sm-1">
+                  <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
+                </div>
+                <div class="col-sm-5">
+                  <form class="form-inline">
+                    <select class="form-control">
+                      <option value=""></option>
+                      <option value="title" selected>Title</option>
+                      <option value="body">Body</option>
+                      <option value="tag">Tag</option>
+                    </select>
+                    <select class="form-control">
+                      <option value="contains">contains</option>
+                      <option value="equal">=</option>
+                    </select>
+                    <input type="text" value="" class="form-control" />
+                  </form>
+                </div>
+                <div class="col-sm-1">
+                  <button type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
+                </div>
+              </div>`;
 
-        $('#rule-table tbody').append(condTr);
-        if ($('#rule-table tbody tr').length >= 5) {
+        $(condTr).insertAfter('#rules-table .row:last');
+        if ($('#rules-table tbody tr').length >= 5) {
           $('.add-rule').prop('disabled', true);
         }
       });
 
-      $('#rule-table tbody').on('click', '.close', function(event) {
-        if ($('#rule-table tbody tr').length > 1) {
+      $('#rules-table tbody').on('click', '.close', function(event) {
+        if ($('#rules-table tbody tr').length > 1) {
           $(this).closest('tr').remove();
         }
 
-        if ($('#rule-table tbody tr').length < 5) {
+        if ($('#rules-table tbody tr').length < 5) {
           $('.add-rule').prop('disabled', false);
         }
       });
 
+/*
       var outputted = false;
       steem.api.streamTransactions(function (err, transaction) {
         const operations = transaction.operations[0];
@@ -156,10 +151,12 @@
           } catch (err) {
           }
 
+          const condition = getConditions($('#rule-table tbody'));
+
           const title = operations[1].title;
           const titleCond = $(".form-group input[type=text]").val();
 
-          if (title.indexOf(titleCond) > 0) {
+          if (titleCond && title.indexOf(titleCond) >= 0) {
             console.log("Title : " + operations[1].title);
 
             const author = operations[1].author;
@@ -179,6 +176,11 @@
           }
         }
       });
+/* */
+
+      function getConditions($ruleTable) {
+        console.log($ruleTable);
+      }
 
     </script>
   </body>
