@@ -24,7 +24,7 @@
         <div class="col-sm-1">
           <button type="button" class="btn btn-light open-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-6">
           <form class="form-inline">
             <select class="form-control field">
               <option value=""></option>
@@ -32,10 +32,9 @@
               <option value="body">Body</option>
             </select>
             <select class="form-control operator">
-              <option value="contains">contains</option>
-              <option value="===">=</option>
-              <option value=">">&gt;</option>
-              <option value="<">&tt;</option>
+              <option value="contains-exact">contains exactly</option>
+              <option value="contains-any">contains any word</option>
+              <option value="contains-all">contains all words</option>
             </select>
             <input type="text" value="" class="form-control condValue" />
           </form>
@@ -107,7 +106,7 @@
                 <div class="col-sm-1">
                   <button type="button" class="btn btn-light open-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">(</button>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-6">
                   <form class="form-inline">
                     <select class="form-control field">
                       <option value=""></option>
@@ -116,25 +115,28 @@
                     </select>
                     <select class="form-control operator">
                       <option value=""></option>
-                      <option value="contains">contains</option>
-                      <option value="===">=</option>
-                      <option value=">">&gt;</option>
-                      <option value="<">&lt;</option>
+                      <option value="contains-exact">contains exactly</option>
+                      <option value="contains-any">contains any word</option>
+                      <option value="contains-all">contains all words</option>
                     </select>
                     <input type="text" value="" class="form-control condValue" />
                   </form>
                 </div>
                 <div class="col-sm-1">
                   <button type="button" class="btn btn-light close-parenthesis" data-toggle="button" aria-pressed="false" autocomplete="off">)</button>
-                </div>`;
+                </div>
+                <div class="col-sm-1">
+                  <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              `;
 
         $(condTr).insertAfter('#rules-table .row:last');
       });
 
-      $('#rules-table tbody').on('click', '.close', function(event) {
-        if ($('#rules-table tbody tr').length > 1) {
-          $(this).closest('tr').remove();
-        }
+      $('#rules-table').on('click', '.close', function(event) {
+        $(this).closest('.row').remove();
       });
 
 //*
@@ -178,6 +180,16 @@
       });
 /* */
 
+      function multiSearchOr(text, searchWords) {
+          var searchExp = new RegExp(searchWords.join("|"),"gi");
+          return searchExp.test(text);
+      }
+
+      function multiSearchAnd(text, searchWords) {
+          var searchExp = new RegExp("("+searchWords.join(")|(")+")","gi");
+          return ( text.match(searchExp) && (text.match(searchExp).length == searchWords.length) );
+      }
+
       function getConditionForEval($rules) {
 
         var ruleForEval = "";
@@ -189,21 +201,26 @@
 
           const field = $rule.find('.field').val();
           const operator = $rule.find('.operator').val();
-          const condValue = $rule.find('.condValue').val().toLowerCase();
           const closePar = $rule.find('.close-parenthesis').attr('aria-pressed');
+          var condValue = $rule.find('.condValue').val().toLowerCase();
 
           if (condValue) {
 
             ruleForEval += (orAnd ? " " + orAnd + " " : "");
             ruleForEval += (openPar === "true") ? " ( " : "";
 
-            if (operator === "contains") {
+            condValue = condValue.trim();
+            condValue = (condValue.startsWith("\"") ? condValue.substring(1) : condValue);
+            condValue = (condValue.endsWith("\"") ? condValue.substring(0, condValue.length - 1) : condValue);
+
+            if (operator === "contains-exact") {
               ruleForEval += field + ".toLowerCase().indexOf('" + condValue + "') >= 0 ";
 
-            } else {
-              ruleForEval += field ? " " + field + " " : "";
-              ruleForEval += operator ? " " + operator + " " : "";
-              ruleForEval += condValue ? " '" + condValue + "' " : "";
+            } else if (operator === "contains-any") {
+              ruleForEval += "multiSearchOr(" + field + ", '" + condValue + "'.split(' '))";
+
+            } else if (operator === "contains-all") {
+              ruleForEval += "multiSearchAnd(" + field + ", '" + condValue + "'.split(' '))";
             }
 
             ruleForEval += (closePar === "true") ? " ) " : "";
