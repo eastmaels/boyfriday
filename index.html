@@ -81,7 +81,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script>
-
       $('.clear-posts').on('click', function() {
         const tableHeader = $('#post-table .row:first');
         $('#post-table').html(tableHeader);
@@ -139,8 +138,8 @@
         $(this).closest('.row').remove();
       });
 
-//*
       var outputted = false;
+      steem.api.setOptions({ url: 'https://api.steemit.com/' });
       steem.api.streamTransactions(function (err, transaction) {
         const operations = transaction.operations[0];
 
@@ -178,7 +177,6 @@
 
         }
       });
-/* */
 
       function multiSearchOr(text, searchWords) {
           var searchExp = new RegExp(searchWords.join("|"),"gi");
